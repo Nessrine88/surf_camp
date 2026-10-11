@@ -1,8 +1,17 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import HeroSection from "../_components/HeroSection";
 import InfoBlock from "../_components/InfoBlock";
-export default function Experience() {
-  const t = useTranslations("Homepage");
+import { fetchDataFromStrapi, processInfoBlocks } from "@/utils/stapi-utils";
+
+export default async function Experience() {
+  const t = await getTranslations("Homepage");
+  const data = await fetchDataFromStrapi("infoblocks-experience?populate=deep");
+
+  console.log("Raw Strapi data:", data);
+
+  const infoBlockData = processInfoBlocks(data);
+
+  console.log("Processed data:", infoBlockData);
   const heroHeadline = (
     <>
       <h1>barrel</h1>
@@ -10,22 +19,20 @@ export default function Experience() {
       <h1>happiness.</h1>
     </>
   );
-  const infoBlockData = {
-    headline: "the experience",
-    text: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora, voluptate velit! Debitis animi ea inventore, sapiente minus quisquam suscipit nobis eos aperiam eaque quidem magnam, obcaecati vel dignissimos totam provident!",
-    button: <button>BOOK NOW</button>,
-    reversed: false,
-  };
+
   return (
     <div>
-      <HeroSection
-        headline={heroHeadline}
-        imgSrc="/assets/hero-experience.png"
-        theme={"orange"}
+      <HeroSection headline={heroHeadline} 
+      imgSrc = "/assets/hero-experience.png"
+      theme="orange"
       />
-      <InfoBlock data={infoBlockData} />
-      <InfoBlock data={{ ...infoBlockData, reversed: true }} />
-      <InfoBlock data={infoBlockData} />
+
+      {infoBlockData.map((data: any) => (
+        <InfoBlock key={data.id} data={data} />
+      ))}
     </div>
   );
 }
+
+
+export const revalidate = 300;

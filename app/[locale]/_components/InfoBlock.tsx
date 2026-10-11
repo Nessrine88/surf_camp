@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 
@@ -5,7 +6,7 @@ interface InfoBlockProps {
   data: {
     headline?: string;
     text?: string | { text?: string };
-    button?: string | { text?: string };
+    button?: ReactNode;
     showImageRight?: boolean;
     imageSrc?: string;
   };
@@ -16,9 +17,6 @@ const InfoBlock = ({ data }: InfoBlockProps) => {
 
   const markdownText =
     typeof text === "string" ? text : text?.text ?? "";
-
-  const buttonText =
-    typeof button === "string" ? button : button?.text ?? "";
 
   return (
     <div className={`info ${showImageRight ? "info--reversed" : ""}`}>
@@ -38,15 +36,10 @@ const InfoBlock = ({ data }: InfoBlockProps) => {
           <ReactMarkdown>{markdownText}</ReactMarkdown>
         </div>
 
-        {buttonText && (
-          <button className="btn btn--medium btn--turquoise">
-            {buttonText}
-          </button>
-        )}
+        {button}
       </div>
     </div>
   );
 };
 
 export default InfoBlock;
-
