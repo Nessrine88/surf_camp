@@ -31,7 +31,7 @@ const Footer = () => {
     },
   ];
   return (
-    <footer className=" footer ">
+    <footer className=" footer">
       <nav className="footer__nav">
         <Image
           src="/assets/logo.svg"
