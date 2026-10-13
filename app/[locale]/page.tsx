@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import HeroSection from "./_components/HeroSection";
 import InfoBlock from "./_components/InfoBlock";
 import { fetchDataFromStrapi, processInfoBlocks } from "@/utils/stapi-utils";
+import BlogPreview from "./_components/BlogPreview/BlogPreview";
 export default async function Home() {
   const t = await getTranslations("Homepage");
   const data = await fetchDataFromStrapi("infoblocks-landing?populate=deep");
@@ -20,13 +21,14 @@ export default async function Home() {
   );
 
   return (
-    <div>
+    <main>
       <HeroSection headline={heroHeadline} />
 
       {infoBlockData.map((data: any) => (
         <InfoBlock key={data.id} data={data} />
       ))}
-    </div>
+      <BlogPreview />
+    </main>
   );
 }
 

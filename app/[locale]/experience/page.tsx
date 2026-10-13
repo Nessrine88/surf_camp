@@ -22,9 +22,10 @@ export default async function Experience() {
 
   return (
     <div>
-      <HeroSection headline={heroHeadline} 
-      imgSrc = "/assets/hero-experience.png"
-      theme="orange"
+      <HeroSection
+        headline={heroHeadline}
+        imgSrc="/assets/hero-experience.png"
+        theme="orange"
       />
 
       {infoBlockData.map((data: any) => (
@@ -33,6 +34,5 @@ export default async function Experience() {
     </div>
   );
 }
-
 
 export const revalidate = 300;

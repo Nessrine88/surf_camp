@@ -15,8 +15,7 @@ interface InfoBlockProps {
 const InfoBlock = ({ data }: InfoBlockProps) => {
   const { headline, text, button, showImageRight, imageSrc } = data;
 
-  const markdownText =
-    typeof text === "string" ? text : text?.text ?? "";
+  const markdownText = typeof text === "string" ? text : (text?.text ?? "");
 
   return (
     <div className={`info ${showImageRight ? "info--reversed" : ""}`}>

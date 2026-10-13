@@ -2,7 +2,10 @@ import axios from "axios";
 import Link from "next/link";
 import { createElement, ReactNode } from "react";
 
-const BASE_URL = (process.env.STRAPI_URL || "http://127.0.0.1:1337").replace(/\/$/, "");
+const BASE_URL = (process.env.STRAPI_URL || "http://127.0.0.1:1337").replace(
+  /\/$/,
+  "",
+);
 
 export async function fetchDataFromStrapi(route: string) {
   const url = `${BASE_URL}/api/${route}`;
@@ -15,7 +18,6 @@ export async function fetchDataFromStrapi(route: string) {
   }
 }
 
-
 function createInfoBlockButton(buttonData?: any) {
   if (!buttonData) return null;
   const { slug, text, colour } = buttonData;
@@ -26,7 +28,7 @@ function createInfoBlockButton(buttonData?: any) {
       href: `/${slug}`,
       className: `btn btn--medium${colour ? ` btn--${colour}` : ""}`,
     },
-    text
+    text,
   );
 }
 
@@ -50,4 +52,47 @@ export function processInfoBlocks(data: any) {
       };
     }) ?? []
   );
+}
+
+export async function fetchBlogArticles() {
+  const blogData = await fetchDataFromStrapi("blog-articles?populate=deep,5");
+
+  const processBlogArticles = blogData.map(processBlogArticle);
+  processBlogArticles.sort(
+    (a: any, z: any) =>
+      new Date(z.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+  );
+  return processBlogArticles;
+}
+
+function processBlogArticle(article: any) {
+  return {
+    ...article.attributes,
+    id: article.id,
+    featuredImage:
+      BASE_URL + article.attributes?.featuredImage.data.attributes?.url,
+  };
+}
+
+
+
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Invalid date";
+  }
+
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  };
+
+  return date.toLocaleDateString("en-US", options);
+}
+
+export function extractImageUrl(imageData:any) {
+  return BASE_URL + imageData.data?.attributes?.url;
 }
