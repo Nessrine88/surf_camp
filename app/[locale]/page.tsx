@@ -7,11 +7,9 @@ export default async function Home() {
   const t = await getTranslations("Homepage");
   const data = await fetchDataFromStrapi("infoblocks-landing?populate=deep");
 
-  console.log("Raw Strapi data:", data);
 
   const infoBlockData = processInfoBlocks(data);
 
-  console.log("Processed data:", infoBlockData);
   const heroHeadline = (
     <>
       <h1>barrel</h1>

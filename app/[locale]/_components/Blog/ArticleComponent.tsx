@@ -4,7 +4,6 @@ import ImageTextComponent from "./ImageTextComponent";
 import LandscapeImage from "./LandscapeImage";
 
 const ArticleComponent = ({ component }:any) => {
-  console.log(component);
   const componentType = component.__component.split("blog-article.")[1];
   switch (componentType) {
     case "headline":

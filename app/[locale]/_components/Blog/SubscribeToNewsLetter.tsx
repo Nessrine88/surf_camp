@@ -1,25 +1,41 @@
 "use client";
 
+import axios from "axios";
 import { ReactEventHandler, useState } from "react";
 
 const SubscribeToNewsLetter = () => {
   const [email, setEmail] = useState("");
   const [hasSignedUp, setHasSignedUp] = useState(false);
+  const [showError, setShowError] = useState(false);
   const onChange = (e: any) => {
     setEmail(e.target.value);
   };
-  const onSubmit = (e: any) => {
+  const onSubmit = async(e: any) => {
     e.preventDefault();
-    console.log("already submitted");
+    try {
     if (email.length) {
       setHasSignedUp(true);
+      await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}api/newsletter-signups`, {
+        data: {
+          email
+        }
+      })
+      setHasSignedUp(true)
+    }  
+    } catch (error) {
+      setShowError(true)
     }
   };
 
   return (
     <section className="newsletter">
-      {hasSignedUp ? (
-        <h4 className="newslzetter__info">
+      {
+        showError ? ( <h4 className="newsletter__thanks">
+          Could not signing up for our newsletter
+        </h4>) :  hasSignedUp ? 
+  
+      (
+        <h4 className="newsletter__thanks">
           Thankyou for signing up for our newsletter
         </h4>
       ) : (
@@ -50,7 +66,7 @@ const SubscribeToNewsLetter = () => {
             </button>
           </form>
         </>
-      )}
+      )    }
     </section>
   );
 };

@@ -2,7 +2,6 @@ import { formatDate } from "@/utils/stapi-utils";
 import Link from "next/link";
 
 const FeaturedArticles = ({ article }: any) => {
-  console.log(article);
   return (
     <Link href={`/blog/${article.slug}`} className="featured-items__article">
       <div className="featured-items__article-img">

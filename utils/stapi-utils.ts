@@ -55,7 +55,7 @@ export function processInfoBlocks(data: any) {
 }
 
 export async function fetchBlogArticles() {
-  const blogData = await fetchDataFromStrapi("blog-articles?populate=deep,5");
+  const blogData = await fetchDataFromStrapi("blog-articles?populate=deep");
 
   const processBlogArticles = blogData.map(processBlogArticle);
   processBlogArticles.sort(
@@ -96,3 +96,30 @@ export function formatDate(dateString: string): string {
 export function extractImageUrl(imageData:any) {
   return BASE_URL + imageData.data?.attributes?.url;
 }
+
+export async function fetchIndividualEvent(eventId:any){
+ const event = await axios.get(`${BASE_URL}/api/events/${eventId}`)
+ return processEventData(event.data.data)
+}
+
+export async function processEventData(event:any){
+return {
+  ...event.attributes,
+  id: event.id
+}
+}
+
+export function generateSignupPayload(formData:any, eventId:any) {
+  if(!eventId) {
+    return {
+      data: {...formData, isGeneralInterest: true}
+    };
+  }else {
+     return {
+      data: {...formData, event: {
+        connect: [eventId]
+      }}
+    };
+  }
+}
+
