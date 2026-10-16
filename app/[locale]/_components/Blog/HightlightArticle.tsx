@@ -12,6 +12,11 @@ interface HighlightArticleProps {
 }
 
 const HighlightArticle = ({ data }: HighlightArticleProps) => {
+    if (!data) {
+    console.error("HighlightArticle received undefined data");
+    return null;
+  }
+
   const { headline, excerpt, slug, featuredImage } = data;
 
   return (
