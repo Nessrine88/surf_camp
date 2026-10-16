@@ -1,5 +1,5 @@
 import axios from "axios";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";k from "next/link";
 import { createElement } from "react";
 import qs from "qs";
 

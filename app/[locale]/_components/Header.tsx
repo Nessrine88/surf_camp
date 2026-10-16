@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation" 
 import { useRouter, usePathname } from "next/navigation"; // next-intl's locale-aware hooks
 import { useParams } from "next/navigation";
 import "@/sass/main.scss";
