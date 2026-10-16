@@ -1,20 +1,23 @@
-import React from 'react'
-import HightlightArticle from '../_components/Blog/HightlightArticle'
-import SubscribeToNewsLetter from '../_components/Blog/SubscribeToNewsLetter'
+import HightlightArticle from "../_components/Blog/HightlightArticle";
+import SubscribeToNewsLetter from "../_components/Blog/SubscribeToNewsLetter";
+import FeaturedItems from "../_components/FeaturedItems/FeaturedItems";
+import { fetchBlogArticles } from "@/utils/stapi-utils";
 
-const Blog = () => {
-  const highLightArticleData = {
-    headline: '3 tips for a super fast takeoff', 
-    excerpt: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem, ad. Ea velit cum reiciendis quis voluptates modi, fugiat animi laboriosam officia aliquam nostrum, quam quasi architecto harum sed, in autem.",
-    slug: "takeoff",
-    featuredImage: "/assets/hero-experience.png"
-  }
+const Blog = async () => {
+  const fetchedArticles = await fetchBlogArticles();
+  const highLightArticleData = fetchedArticles.find(
+    (article: any) => article.isHighlightArticle,
+  );
+  const featuredArticles = fetchedArticles.filter(
+    (article: any) => !article.isHighlightArticle,
+  );
   return (
-    <main className='blog-page'>
+    <main className="blog-page">
       <HightlightArticle data={highLightArticleData} />
       <SubscribeToNewsLetter />
+      <FeaturedItems items={featuredArticles} />
     </main>
-  )
-}
+  );
+};
 
-export default Blog
+export default Blog;

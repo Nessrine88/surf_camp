@@ -7,11 +7,9 @@ export default async function Experience() {
   const t = await getTranslations("Homepage");
   const data = await fetchDataFromStrapi("infoblocks-experience?populate=deep");
 
-  console.log("Raw Strapi data:", data);
 
   const infoBlockData = processInfoBlocks(data);
 
-  console.log("Processed data:", infoBlockData);
   const heroHeadline = (
     <>
       <h1>barrel</h1>
@@ -22,9 +20,10 @@ export default async function Experience() {
 
   return (
     <div>
-      <HeroSection headline={heroHeadline} 
-      imgSrc = "/assets/hero-experience.png"
-      theme="orange"
+      <HeroSection
+        headline={heroHeadline}
+        imgSrc="/assets/hero-experience.png"
+        theme="orange"
       />
 
       {infoBlockData.map((data: any) => (
@@ -33,6 +32,5 @@ export default async function Experience() {
     </div>
   );
 }
-
 
 export const revalidate = 300;
