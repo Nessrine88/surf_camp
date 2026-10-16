@@ -1,5 +1,5 @@
 import { formatDate } from "@/utils/stapi-utils";
-import { Link } from "@/i18n/navigation";k from "next/link";
+import { Link } from "@/i18n/navigation";
 
 const FeaturedArticles = ({ article }: any) => {
   return (

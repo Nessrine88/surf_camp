@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Link } from "@/i18n/navigation";k from "next/link";
+import { Link } from "@/i18n/navigation";
 import React from "react";
 
 const HeroSection = ({ imgSrc, headline, theme = "turquoise" }: any) => {

@@ -1,4 +1,4 @@
-import { Link } from "@/i18n/navigation";k from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface ArticleData {
   headline: string;
