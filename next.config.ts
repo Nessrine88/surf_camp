@@ -15,12 +15,17 @@ const nextConfig: NextConfig = {
         hostname: "utfs.io",
       },
       {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
         protocol: "http",
         hostname: "127.0.0.1",
         port: "1337",
         pathname: "/uploads/**",
       },
-         {
+      {
         protocol: "https",
         hostname: "surf-camp-strapi.onrender.com",
         pathname: "/uploads/**",
