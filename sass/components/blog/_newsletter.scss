@@ -1,3 +1,5 @@
+@use "../../base/variables" as *;
+@use "../../base/mixins" as *;
 .newsletter {
   display: flex;
   background-color: $light-brown;

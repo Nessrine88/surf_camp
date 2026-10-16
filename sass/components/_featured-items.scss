@@ -1,3 +1,7 @@
+@use "../base/variables" as *;
+@use "../base/mixins" as *;
+
+
 .featured-items {
   display: flex;
   flex-direction: column;
