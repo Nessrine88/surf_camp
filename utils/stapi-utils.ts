@@ -3,10 +3,10 @@ import Link from "next/link";
 import { createElement } from "react";
 import qs from "qs";
 
-const BASE_URL = (process.env.STRAPI_URL || "http://127.0.0.1:1337").replace(
-  /\/$/,
-  "",
-);
+const BASE_URL = (
+  process.env.STRAPI_URL ||
+  "https://surf-camp-strapi.onrender.com/"
+).replace(/\/+$/, "");
 
 export async function fetchDataFromStrapi(route: string) {
   const url = `${BASE_URL}/api/${route}`;
@@ -66,12 +66,23 @@ export async function fetchBlogArticles() {
   return processBlogArticles;
 }
 
+
 function processBlogArticle(article: any) {
+  if (!article) {
+    throw new Error("Strapi returned an undefined blog article");
+  }
+
+  const attributes = article.attributes ?? {};
+  const imageUrl = attributes.featuredImage?.data?.attributes?.url;
+
   return {
-    ...article.attributes,
+    ...attributes,
     id: article.id,
-    featuredImage:
-      BASE_URL + article.attributes?.featuredImage.data.attributes?.url,
+    featuredImage: imageUrl
+      ? imageUrl.startsWith("http")
+        ? imageUrl
+        : `${BASE_URL}${imageUrl}`
+      : null,
   };
 }
 
