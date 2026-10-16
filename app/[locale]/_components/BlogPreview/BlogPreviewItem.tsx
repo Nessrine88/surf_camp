@@ -3,6 +3,16 @@ import Link from "next/link";
 
 
 const BlogPreviewItem = ({ article }:any) => {
+    if (!article) {
+    console.error("BlogPreviewItem received an undefined article");
+    return null;
+  }
+
+  if (!article.slug) {
+    console.error("Blog article is missing its slug:", article);
+    return null;
+  }
+
   return (
     <Link href= {`/blog/${article.slug} `} className="blog-preview__item">
       <div className="blog-preview__image">

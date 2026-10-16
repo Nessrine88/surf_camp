@@ -14,8 +14,8 @@ return (
 <div className="blog-preview">
   <h2 className="blog-preview__headline">the blog.</h2>
   <div className="blog-preview__container">
-    {articlesToDisplay.map((article) => (
-      <BlogPreviewItem  key={article.id} article={article} />
+    {articlesToDisplay.map((article,i) => (
+      <BlogPreviewItem  key={i} article={article} />
     ))}
   </div>
 </div>
