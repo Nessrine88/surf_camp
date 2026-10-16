@@ -1,5 +1,7 @@
 import { NextPage } from 'next'
 import SignupForm from '../_components/Events/SignupForm'
+import { fetchAllEvents } from '@/utils/stapi-utils';
+import FeaturedItems from '../_components/FeaturedItems/FeaturedItems';
 
 interface Props {}
 const infoText= (
@@ -13,10 +15,18 @@ const infoText= (
     </>
 );
 const headline = "You want to stay tuned for our events"
-const Page = () => {
-  return <main className='events-page'>
+
+
+const Page = async() => {
+const allEvents = await fetchAllEvents()
+console.log(allEvents)
+  return (
+    <main className='events-page'>
     <SignupForm infoText={infoText} headline={headline} />
+    <FeaturedItems items= {allEvents} itemType="event"  headline={headline}/>
   </main>
+  )
 }
+
 
 export default Page
