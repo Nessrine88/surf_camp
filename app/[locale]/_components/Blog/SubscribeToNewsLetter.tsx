@@ -7,6 +7,10 @@ const SubscribeToNewsLetter = () => {
   const [email, setEmail] = useState("");
   const [hasSignedUp, setHasSignedUp] = useState(false);
   const [showError, setShowError] = useState(false);
+  const BASE_URL = (
+  process.env.STRAPI_URL ||
+  "https://surf-camp-strapi.onrender.com/"
+).replace(/\/+$/, "");
   const onChange = (e: any) => {
     setEmail(e.target.value);
   };
@@ -14,7 +18,7 @@ const SubscribeToNewsLetter = () => {
     e.preventDefault();
     try {
     if (email.length) {
-      await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}api/newsletter-signups`, {
+      await axios.post(`${BASE_URL}/api/newsletter-signups`, {
         data: {
           email
         }

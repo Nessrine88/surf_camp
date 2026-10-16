@@ -20,7 +20,10 @@ const SignupForm = ({ headline, infoText, buttonLabel, price, eventId=null }: an
   const onChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const BASE_URL = (
+  process.env.STRAPI_URL ||
+  "https://surf-camp-strapi.onrender.com/"
+).replace(/\/+$/, "");
   const onSubmit = async (e: any) => {
     e.preventDefault();
     const payload = generateSignupPayload(formData,eventId)
@@ -30,7 +33,7 @@ if(allDataFilledIn(formData)){
     try {
       if (formData.email.length) {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL}api/participants`,
+          `${BASE_URL}/api/participants`,
           payload
         );
         setHasSignedUp(true);
