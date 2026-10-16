@@ -1,6 +1,7 @@
 import axios from "axios";
 import Link from "next/link";
-import { createElement, ReactNode } from "react";
+import { createElement } from "react";
+import qs from "qs";
 
 const BASE_URL = (process.env.STRAPI_URL || "http://127.0.0.1:1337").replace(
   /\/$/,
@@ -102,11 +103,13 @@ export async function fetchIndividualEvent(eventId:any){
  return processEventData(event.data.data)
 }
 
-export async function processEventData(event:any){
-return {
-  ...event.attributes,
-  id: event.id
-}
+function processEventData(event: any) {  
+  const imageUrl = event.attributes?.image?.data?.attributes?.url
+  return {
+    ...event.attributes,
+    image: imageUrl ? BASE_URL + imageUrl : null,
+    id: event.id,
+  }
 }
 
 export function generateSignupPayload(formData:any, eventId:any) {
@@ -121,5 +124,62 @@ export function generateSignupPayload(formData:any, eventId:any) {
       }}
     };
   }
+};
+
+function createEventQuery(eventIdToExclude: any = null): string {
+  const queryObject: any = {
+    pagination: {
+      start: 0,
+      limit: 12,
+    },
+    sort: ["startingDate:asc"],
+    filters: {
+      startingDate: {
+        $gte: new Date(),
+      },
+    },
+    populate: {
+      image: {
+        populate: "*",
+      },
+    },
+  };
+
+  if (eventIdToExclude) {
+    queryObject.filters.id = {
+      $ne: eventIdToExclude,
+    };
+  }
+
+  return qs.stringify(queryObject, {
+    encodeValuesOnly: true,
+  });
 }
 
+export async function fetchAllEvents(
+  eventToExclude: any = null
+) {
+  const query = createEventQuery(eventToExclude);
+
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/api/events?${query}`
+    );
+
+    return response.data.data.map((event: any) =>
+      processEventData(event)
+    );
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      console.error(
+        "fetchAllEvents failed:",
+        err.response?.status,
+        err.response?.data ?? err.message
+      );
+    } else {
+      console.error(err);
+    }
+
+    return [];
+  }
+}

@@ -14,7 +14,6 @@ const SubscribeToNewsLetter = () => {
     e.preventDefault();
     try {
     if (email.length) {
-      setHasSignedUp(true);
       await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}api/newsletter-signups`, {
         data: {
           email

@@ -1,10 +1,12 @@
 import SignupForm from '../../_components/Events/SignupForm'
-import { fetchDataFromStrapi, fetchIndividualEvent } from '@/utils/stapi-utils'
+import { fetchAllEvents, fetchDataFromStrapi, fetchIndividualEvent } from '@/utils/stapi-utils'
 import ReactMarkdown from 'react-markdown'
+import FeaturedItems from '../../_components/FeaturedItems/FeaturedItems'
 
 const Page = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params
-  const event = await fetchIndividualEvent(eventId)
+  const event = await fetchIndividualEvent(eventId);
+  const otherEvent = await fetchAllEvents(eventId);
   const descriptionMarkdown = <ReactMarkdown>{event.description}</ReactMarkdown>
 
   const pricing = {
@@ -21,6 +23,7 @@ const Page = async ({ params }: { params: Promise<{ eventId: string }> }) => {
         pricing={pricing}
         eventId={eventId}
       />
+      <FeaturedItems items={otherEvent} itemType="event" headline="Upcoming camps & events" />
     </main>
   )
 }
