@@ -40,3 +40,5 @@ export async function generateStaticParams() {
     article: article.attributes.slug,
   }));
 }
+
+export const revalidate = 60

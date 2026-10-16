@@ -114,14 +114,26 @@ export async function fetchIndividualEvent(eventId:any){
  return processEventData(event.data.data)
 }
 
-function processEventData(event: any) {  
-  const imageUrl = event.attributes?.image?.data?.attributes?.url
-  return {
-    ...event.attributes,
-    image: imageUrl ? BASE_URL + imageUrl : null,
-    id: event.id,
+
+function processEventData(event: any) {
+  if (!event) {
+    throw new Error("Strapi returned an undefined event");
   }
+
+  const attributes = event.attributes ?? {};
+  const imageUrl = attributes.image?.data?.attributes?.url;
+
+  return {
+    ...attributes,
+    image: imageUrl
+      ? imageUrl.startsWith("http")
+        ? imageUrl
+        : `${BASE_URL}${imageUrl}`
+      : null,
+    id: event.id,
+  };
 }
+
 
 export function generateSignupPayload(formData:any, eventId:any) {
   if(!eventId) {

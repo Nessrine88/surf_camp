@@ -20,7 +20,7 @@ const Page = async ({ params }: { params: Promise<{ eventId: string }> }) => {
         headline={event.name}
         infoText={descriptionMarkdown}
         buttonLabel="Sign Up"
-        pricing={pricing}
+        price={pricing}
         eventId={eventId}
       />
       <FeaturedItems items={otherEvent} itemType="event" headline="Upcoming camps & events" />
@@ -40,3 +40,4 @@ export async function generateStaticParams() {
     return []
   }
 }
+
