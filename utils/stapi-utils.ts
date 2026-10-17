@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import { Link } from "@/i18n/navigation";
 import { createElement } from "react";
@@ -8,19 +9,67 @@ const BASE_URL = (
   "https://surf-camp-strapi.onrender.com/"
 ).replace(/\/+$/, "");
 
+/**
+ * Normalizes image URLs returned by Strapi.
+ *
+ * - Keeps valid absolute URLs unchanged.
+ * - Repairs malformed protocols such as https//.
+ * - Handles protocol-relative URLs.
+ * - Prepends BASE_URL only to relative paths.
+ */
+function normalizeImageUrl(
+  url?: string | null
+): string | undefined {
+  if (!url || typeof url !== "string") {
+    return undefined;
+  }
+
+  const cleanedUrl = url.trim();
+
+  if (!cleanedUrl) {
+    return undefined;
+  }
+
+  // Repair malformed URLs such as:
+  // https//res.cloudinary.com/...
+  // http//res.cloudinary.com/...
+  const repairedUrl = cleanedUrl.replace(
+    /^(https?):\/{0,1}(?!\/)/i,
+    "$1://"
+  );
+
+  // Already an absolute HTTP(S) URL.
+  // Do not prepend the Strapi base URL.
+  if (/^https?:\/\//i.test(repairedUrl)) {
+    return repairedUrl;
+  }
+
+  // Protocol-relative URL, e.g. //res.cloudinary.com/...
+  if (repairedUrl.startsWith("//")) {
+    return `https:${repairedUrl}`;
+  }
+
+  // Relative URL, e.g. /uploads/image.png
+  return `${BASE_URL}/${repairedUrl.replace(/^\/+/, "")}`;
+}
+
 export async function fetchDataFromStrapi(route: string) {
   const url = `${BASE_URL}/api/${route}`;
+
   try {
     const response = await axios.get(url);
     return response.data.data;
   } catch (error) {
     console.error("Strapi fetch error:", error);
-    throw new Error(`Could not fetch data from ${url}`, { cause: error });
+    throw new Error(`Could not fetch data from ${url}`, {
+      cause: error,
+    });
   }
 }
 
 function createInfoBlockButton(buttonData?: any) {
   if (!buttonData) return null;
+
   const { slug, text, colour } = buttonData;
 
   return createElement(
@@ -29,7 +78,7 @@ function createInfoBlockButton(buttonData?: any) {
       href: `/${slug}`,
       className: `btn btn--medium${colour ? ` btn--${colour}` : ""}`,
     },
-    text,
+    text
   );
 }
 
@@ -44,11 +93,7 @@ export function processInfoBlocks(data: any) {
       return {
         ...attributes,
         id: infoBlock.id,
-        imageSrc: imageUrl
-          ? imageUrl.startsWith("http")
-            ? imageUrl
-            : `${BASE_URL}${imageUrl}`
-          : undefined,
+        imageSrc: normalizeImageUrl(imageUrl),
         button: createInfoBlockButton(attributes?.button),
       };
     }) ?? []
@@ -56,16 +101,20 @@ export function processInfoBlocks(data: any) {
 }
 
 export async function fetchBlogArticles() {
-  const blogData = await fetchDataFromStrapi("blog-articles?populate=deep");
+  const blogData = await fetchDataFromStrapi(
+    "blog-articles?populate=deep"
+  );
 
   const processBlogArticles = blogData.map(processBlogArticle);
+
   processBlogArticles.sort(
     (a: any, z: any) =>
-      new Date(z.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+      new Date(z.publishedAt).getTime() -
+      new Date(a.publishedAt).getTime()
   );
+
   return processBlogArticles;
 }
-
 
 function processBlogArticle(article: any) {
   if (!article) {
@@ -73,20 +122,15 @@ function processBlogArticle(article: any) {
   }
 
   const attributes = article.attributes ?? {};
-  const imageUrl = attributes.featuredImage?.data?.attributes?.url;
+  const imageUrl =
+    attributes.featuredImage?.data?.attributes?.url;
 
   return {
     ...attributes,
     id: article.id,
-    featuredImage: imageUrl
-      ? imageUrl.startsWith("http")
-        ? imageUrl
-        : `${BASE_URL}${imageUrl}`
-      : null,
+    featuredImage: normalizeImageUrl(imageUrl) ?? null,
   };
 }
-
-
 
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -105,15 +149,19 @@ export function formatDate(dateString: string): string {
   return date.toLocaleDateString("en-US", options);
 }
 
-export function extractImageUrl(imageData:any) {
-  return BASE_URL + imageData.data?.attributes?.url;
+export function extractImageUrl(imageData: any) {
+  const imageUrl = imageData?.data?.attributes?.url;
+
+  return normalizeImageUrl(imageUrl);
 }
 
-export async function fetchIndividualEvent(eventId:any){
- const event = await axios.get(`${BASE_URL}/api/events/${eventId}`)
- return processEventData(event.data.data)
-}
+export async function fetchIndividualEvent(eventId: any) {
+  const event = await axios.get(
+    `${BASE_URL}/api/events/${eventId}`
+  );
 
+  return processEventData(event.data.data);
+}
 
 function processEventData(event: any) {
   if (!event) {
@@ -125,29 +173,33 @@ function processEventData(event: any) {
 
   return {
     ...attributes,
-    image: imageUrl
-      ? imageUrl.startsWith("http")
-        ? imageUrl
-        : `${BASE_URL}${imageUrl}`
-      : null,
+    image: normalizeImageUrl(imageUrl) ?? null,
     id: event.id,
   };
 }
 
-
-export function generateSignupPayload(formData:any, eventId:any) {
-  if(!eventId) {
+export function generateSignupPayload(
+  formData: any,
+  eventId: any
+) {
+  if (!eventId) {
     return {
-      data: {...formData, isGeneralInterest: true}
-    };
-  }else {
-     return {
-      data: {...formData, event: {
-        connect: [eventId]
-      }}
+      data: {
+        ...formData,
+        isGeneralInterest: true,
+      },
     };
   }
-};
+
+  return {
+    data: {
+      ...formData,
+      event: {
+        connect: [eventId],
+      },
+    },
+  };
+}
 
 function createEventQuery(eventIdToExclude: any = null): string {
   const queryObject: any = {
