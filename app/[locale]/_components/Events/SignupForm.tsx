@@ -21,7 +21,7 @@ const SignupForm = ({ headline, infoText, buttonLabel, price, eventId=null }: an
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const BASE_URL = (
-  process.env.STRAPI_URL ||
+  process.env.NEXT_PUBLIC_STRAPI_URL ||
   "https://surf-camp-strapi.onrender.com/"
 ).replace(/\/+$/, "");
   const onSubmit = async (e: any) => {

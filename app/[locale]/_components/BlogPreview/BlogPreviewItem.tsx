@@ -13,7 +13,7 @@ const BlogPreviewItem = ({ article }:any) => {
   }
 
   return (
-    <Link href= {`/blog/${article.slug} `} className="blog-preview__item">
+    <Link href= {`/blog/${article.slug}`} className="blog-preview__item">
       <div className="blog-preview__image">
         <img src={article.featuredImage} alt="" />
       </div>

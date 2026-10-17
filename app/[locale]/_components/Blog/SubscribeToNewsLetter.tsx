@@ -8,7 +8,7 @@ const SubscribeToNewsLetter = () => {
   const [hasSignedUp, setHasSignedUp] = useState(false);
   const [showError, setShowError] = useState(false);
   const BASE_URL = (
-  process.env.STRAPI_URL ||
+  process.env.NEXT_PUBLIC_STRAPI_URL ||
   "https://surf-camp-strapi.onrender.com/"
 ).replace(/\/+$/, "");
   const onChange = (e: any) => {
