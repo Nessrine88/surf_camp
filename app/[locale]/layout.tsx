@@ -1,24 +1,27 @@
-
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import { locales } from "../../i18n/request";
-import { getMessages } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import Header from "./_components/Header";
 import Footer from "./_components/Footer";
 
 import "./globals.css";
 import "@/sass/main.scss";
 
-export const metadata: Metadata = {
-  title: "Surf Camp",
-  description: "Surf camps and events",
-};
+export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: LayoutProps<"/[locale]">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Metadata" });
+  return { title: t("title"), description: t("description") };
 }
 
 export default async function RootLayout({
@@ -27,18 +30,14 @@ export default async function RootLayout({
 }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
 
-  if (!hasLocale(locales, locale)) {
-    notFound();
-  }
+  if (!hasLocale(routing.locales, locale)) notFound();
 
   setRequestLocale(locale);
 
-  const messages = await getMessages();
-
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale}>
       <body className="min-h-screen flex flex-col justify-between">
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider>
           <Header />
           {children}
           <Footer />
