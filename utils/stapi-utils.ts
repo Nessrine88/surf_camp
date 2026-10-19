@@ -1,5 +1,4 @@
 
-import axios from "axios";
 import { Link } from "@/i18n/navigation";
 import { createElement } from "react";
 import qs from "qs";
@@ -9,13 +8,33 @@ const BASE_URL = (
   "https://surf-camp-strapi.onrender.com/"
 ).replace(/\/+$/, "");
 
+const DEFAULT_REVALIDATE = 3600;
+
+/**
+ * Fetch public, read-only Strapi data using Next.js server caching.
+ *
+ * IMPORTANT: Call this from Server Components or other server-side
+ * code, not directly from Client Components.
+ */
+async function strapiGet(
+  url: string,
+  revalidate = DEFAULT_REVALIDATE
+) {
+  const response = await fetch(url, {
+    next: { revalidate },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Strapi request failed: ${response.status} ${url}`
+    );
+  }
+
+  return response.json();
+}
+
 /**
  * Normalizes image URLs returned by Strapi.
- *
- * - Keeps valid absolute URLs unchanged.
- * - Repairs malformed protocols such as https//.
- * - Handles protocol-relative URLs.
- * - Prepends BASE_URL only to relative paths.
  */
 function normalizeImageUrl(
   url?: string | null
@@ -30,35 +49,36 @@ function normalizeImageUrl(
     return undefined;
   }
 
-  // Repair malformed URLs such as:
-  // https//res.cloudinary.com/...
-  // http//res.cloudinary.com/...
   const repairedUrl = cleanedUrl.replace(
     /^(https?):\/{0,1}(?!\/)/i,
     "$1://"
   );
 
-  // Already an absolute HTTP(S) URL.
-  // Do not prepend the Strapi base URL.
   if (/^https?:\/\//i.test(repairedUrl)) {
     return repairedUrl;
   }
 
-  // Protocol-relative URL, e.g. //res.cloudinary.com/...
   if (repairedUrl.startsWith("//")) {
     return `https:${repairedUrl}`;
   }
 
-  // Relative URL, e.g. /uploads/image.png
   return `${BASE_URL}/${repairedUrl.replace(/^\/+/, "")}`;
 }
 
-export async function fetchDataFromStrapi(route: string) {
-  const url = `${BASE_URL}/api/${route}`;
+export async function fetchDataFromStrapi(
+  route: string,
+  revalidate = DEFAULT_REVALIDATE
+) {
+  const normalizedRoute = route.replace(/^\/+/, "");
+  const apiRoute = normalizedRoute.startsWith("api/")
+    ? normalizedRoute
+    : `api/${normalizedRoute}`;
+
+  const url = `${BASE_URL}/${apiRoute}`;
 
   try {
-    const response = await axios.get(url);
-    return response.data.data;
+    const response = await strapiGet(url, revalidate);
+    return response.data;
   } catch (error) {
     console.error("Strapi fetch error:", error);
     throw new Error(`Could not fetch data from ${url}`, {
@@ -102,7 +122,8 @@ export function processInfoBlocks(data: any) {
 
 export async function fetchBlogArticles() {
   const blogData = await fetchDataFromStrapi(
-    "blog-articles?populate=deep"
+    "blog-articles?populate=deep",
+    3600
   );
 
   const processBlogArticles = blogData.map(processBlogArticle);
@@ -151,16 +172,16 @@ export function formatDate(dateString: string): string {
 
 export function extractImageUrl(imageData: any) {
   const imageUrl = imageData?.data?.attributes?.url;
-
   return normalizeImageUrl(imageUrl);
 }
 
 export async function fetchIndividualEvent(eventId: any) {
-  const event = await axios.get(
-    `${BASE_URL}/api/events/${eventId}`
+  const event = await strapiGet(
+    `${BASE_URL}/api/events/${encodeURIComponent(String(eventId))}`,
+    300
   );
 
-  return processEventData(event.data.data);
+  return processEventData(event.data);
 }
 
 function processEventData(event: any) {
@@ -202,15 +223,21 @@ export function generateSignupPayload(
 }
 
 function createEventQuery(eventIdToExclude: any = null): string {
+  // Round down to a five-minute interval so identical requests
+  // can share the same cache entry instead of generating a new URL
+  // on every render.
+  const now = new Date();
+  now.setUTCMinutes(Math.floor(now.getUTCMinutes() / 5) * 5, 0, 0);
+
   const queryObject: any = {
     pagination: {
       start: 0,
-      limit: 12,
+      limit: 50,
     },
     sort: ["startingDate:asc"],
     filters: {
       startingDate: {
-        $gte: new Date(),
+        $gte: now.toISOString(),
       },
     },
     populate: {
@@ -237,24 +264,21 @@ export async function fetchAllEvents(
   const query = createEventQuery(eventToExclude);
 
   try {
-    const response = await axios.get(
-      `${BASE_URL}/api/events?${query}`
+    const response = await strapiGet(
+      `${BASE_URL}/api/events?${query}`,
+      300
     );
 
-    return response.data.data.map((event: any) =>
-      processEventData(event)
-    );
+    return (response.data ?? [])
+      .filter(
+        (event: any) =>
+          new Date(event.attributes?.startingDate).getTime() >=
+          Date.now()
+      )
+      .slice(0, 12)
+      .map((event: any) => processEventData(event));
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      console.error(
-        "fetchAllEvents failed:",
-        err.response?.status,
-        err.response?.data ?? err.message
-      );
-    } else {
-      console.error(err);
-    }
-
+    console.error("fetchAllEvents failed:", err);
     return [];
   }
 }
