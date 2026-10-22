@@ -1,28 +1,39 @@
 @use "../base/variables" as *;
 @use "../base/mixins" as *;
+
 .info {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 4rem;
   padding-right: 4.8rem;
   margin-top: 8rem;
 
   &--reversed {
     flex-direction: row-reverse;
-    padding-left: 4.8rem;
     padding-right: 0;
 
     & .info__image {
-      border-radius: 329px 0px 0px 329px;
+      border-radius: 329px 0 0 329px;
     }
   }
 
   &__image,
   &__text {
     width: 48%;
+    min-width: 0;
+  }
+   &__text {
+    padding-left:2rem;
+    padding-bottom: 2rem;
   }
 
   &__image {
-    border-radius: 0px 329px 329px 0px;
+    display: block;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 0 329px 329px 0;
+    flex-shrink: 0;
   }
 
   &__headline {
@@ -32,5 +43,92 @@
 
   & .btn {
     margin-top: 3rem;
+  }
+
+  // Tablets
+  @include respond(tab-port) {
+    gap: 3rem;
+    padding-right: 3rem;
+    margin-top: 6rem;
+
+    &--reversed {
+      padding-left: 3rem;
+      padding-right: 0;
+    }
+
+    &__image,
+    &__text {
+      width: 50%;
+    }
+
+    &__image {
+      height: 350px;
+      border-radius: 0 180px 180px 0;
+    }
+
+    &--reversed .info__image {
+      border-radius: 180px 0 0 180px;
+    }
+
+    &__headline {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    & .btn {
+      margin-top: 2rem;
+    }
+  }
+
+  // Mobile
+  @include respond(phone) {
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 4rem;
+
+    &--reversed {
+      flex-direction: column;
+    }
+
+    &__image,
+    &__text {
+      width: 100%;
+    }
+
+    &__text {
+      padding: 2rem;
+    }
+
+    &__image {
+      height: 280px;
+      max-width: 100%;
+      border-radius: 0 160px 160px 0;
+    }
+
+    &--reversed .info__image {
+      border-radius: 160px 0 0 160px;
+      padding-left: 4rem;
+    }
+
+    &__headline {
+      margin-top: 0;
+      margin-bottom: 2rem;
+    }
+
+    & .btn {
+      margin-top: 2rem;
+    }
+  }
+
+  // Small mobile screens
+  @media (max-width: 360px) {
+    &__image {
+      height: 220px;
+      border-radius: 0 100px 100px 0;
+    }
+
+    &--reversed .info__image {
+      border-radius: 100px 0 0 100px;
+    }
   }
 }

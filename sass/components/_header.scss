@@ -1,35 +1,173 @@
+
 @use "../base/variables" as *;
 @use "../base/mixins" as *;
+
 .header {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem 4.8rem;
   z-index: 10;
+  padding: 2rem 4.8rem;
 
   &--light {
     color: white;
 
-    & .header__logo {
-      filter: invert(99%) sepia(3%) saturate(825%) hue-rotate(200deg)
-        brightness(118%) contrast(100%);
+    .header__logo {
+      filter: invert(99%) sepia(3%) saturate(825%)
+        hue-rotate(200deg) brightness(118%) contrast(100%);
+    }
+
+    .header__hamburger span {
+      background-color: white;
     }
   }
 
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+  }
+
   &__logo {
+    display: block;
     width: 5rem;
+    height: auto;
+  }
+
+  &__menu {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
   }
 
   &__nav {
     display: flex;
+    align-items: center;
     list-style: none;
+    padding: 0;
+    margin: 0;
 
-    & li:not(:last-of-type) {
+    li:not(:last-child) {
       margin-right: 4.6rem;
+    }
+
+    h5 {
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+
+  &__hamburger {
+    display: none;
+    padding: 0.5rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    span {
+      display: block;
+      width: 2.6rem;
+      height: 2px;
+      margin: 0.6rem 0;
+      background-color: currentColor;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    &--open {
+      span:nth-child(1) {
+        transform: translateY(0.8rem) rotate(45deg);
+      }
+
+      span:nth-child(2) {
+        opacity: 0;
+      }
+
+      span:nth-child(3) {
+        transform: translateY(-0.8rem) rotate(-45deg);
+      }
+    }
+  }
+
+  // Tablet
+  @include respond(tab-port) {
+    padding: 2rem 3rem;
+
+    &__menu {
+      gap: 2rem;
+    }
+
+    &__nav li:not(:last-child) {
+      margin-right: 2rem;
+    }
+  }
+
+  // Mobile
+  @include respond(phone) {
+    padding: 1.5rem 2rem;
+
+    &__logo {
+      width: 4rem;
+    }
+
+    &__hamburger {
+      display: block;
+      position: relative;
+      z-index: 12;
+    }
+
+    &__menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2.5rem;
+      padding: 2.5rem 2rem;
+      background: white;
+      color: #111;
+      box-shadow: 0 0.8rem 1.5rem rgb(0 0 0 / 10%);
+
+      &--open {
+        display: flex;
+      }
+    }
+
+    &__nav {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.8rem;
+
+      li:not(:last-child) {
+        margin-right: 0;
+      }
+    }
+
+    &__book {
+      align-self: flex-start;
+    }
+
+    &--light {
+      .header__menu {
+        background: #111;
+        color: white;
+      }
+    }
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.2rem 1rem;
+
+    &__menu {
+      padding: 2rem 1.5rem;
     }
   }
 }

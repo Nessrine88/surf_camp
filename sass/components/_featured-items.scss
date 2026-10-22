@@ -1,6 +1,6 @@
+
 @use "../base/variables" as *;
 @use "../base/mixins" as *;
-
 
 .featured-items {
   display: flex;
@@ -21,6 +21,7 @@
     display: flex;
     flex-direction: column;
     width: 32.5%;
+    min-width: 0;
   }
 
   &__headline {
@@ -33,6 +34,7 @@
     height: 35.5rem;
 
     & img {
+      display: block;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -53,9 +55,89 @@
       & h5 {
         margin-bottom: 3rem;
       }
+
       & .bold {
         margin-top: auto;
       }
+    }
+  }
+
+  // Tablets
+  @include respond(tab-port) {
+    &__container {
+      column-gap: 3%;
+      row-gap: 4rem;
+      margin-bottom: 4rem;
+    }
+
+    &__article {
+      width: 48.5%;
+    }
+
+    &__headline {
+      margin-bottom: 4rem;
+    }
+
+    &__article-img {
+      height: 30rem;
+    }
+
+    &__article-text {
+      padding: 2rem 2rem 3rem;
+      border-radius: 0 0 2.5rem 2.5rem;
+    }
+
+    &__article-img img {
+      border-radius: 2.5rem 2.5rem 0 0;
+    }
+  }
+
+  // Mobile
+  @include respond(phone) {
+    &__container {
+      flex-direction: column;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    &__article {
+      width: 100%;
+    }
+
+    &__headline {
+      margin-bottom: 3rem;
+    }
+
+    &__article-img {
+      height: clamp(20rem, 65vw, 30rem);
+    }
+
+    &__article-text {
+      padding: 2rem;
+      border-radius: 0 0 2rem 2rem;
+    }
+
+    &__article-img img {
+      border-radius: 2rem 2rem 0 0;
+    }
+
+    &__article-text--event h5 {
+      margin-bottom: 2rem;
+    }
+  }
+
+  // Small mobile screens
+  @media (max-width: 360px) {
+    &__container {
+      gap: 2rem;
+    }
+
+    &__article-img {
+      height: 20rem;
+    }
+
+    &__article-text {
+      padding: 1.5rem;
     }
   }
 }

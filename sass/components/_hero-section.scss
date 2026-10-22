@@ -26,21 +26,24 @@
 
   &__headline {
     margin-bottom: 6.5rem;
+    font-size: 5rem;
 
     &--orange {
       color: white;
     }
   }
 
-  &__logo {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 50%);
+ &__logo {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  width: clamp(60px, 12vw, 100px);
+  height: auto;
 
-    &--orange {
-      filter: invert(62%) sepia(21%) saturate(1646%) hue-rotate(348deg)
-        brightness(88%) contrast(81%);
-    }
+  &--orange {
+    filter: invert(62%) sepia(21%) saturate(1646%) hue-rotate(348deg)
+      brightness(88%) contrast(81%);
   }
+}
 }

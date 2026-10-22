@@ -1,14 +1,18 @@
+
 @use "../../base/variables" as *;
 @use "../../base/mixins" as *;
+
 .highlight-article {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: stretch;
+  gap: 3rem;
   width: 100%;
   margin-bottom: 10rem;
 
   &__info {
-    width: 49%;
+    width: calc(50% - 1.5rem);
+    min-width: 0;
 
     & .copy {
       margin-top: 4rem;
@@ -17,8 +21,73 @@
   }
 
   &__image {
-    width: 49%;
+    display: block;
+    width: calc(50% - 1.5rem);
     height: auto;
+    min-width: 0;
+    object-fit: cover;
+    align-self: stretch;
     border-radius: 4rem;
+  }
+
+  // Tablets
+  @include respond(tab-port) {
+    gap: 2.5rem;
+    margin-bottom: 7rem;
+
+    &__info,
+    &__image {
+      width: calc(50% - 1.25rem);
+    }
+
+    &__info .copy {
+      margin-top: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    &__image {
+      border-radius: 3rem;
+    }
+  }
+
+  // Mobile
+  @include respond(phone) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2.5rem;
+    margin-bottom: 5rem;
+
+    &__info,
+    &__image {
+      width: 100%;
+    }
+
+    &__info .copy {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    &__image {
+      height: auto;
+      aspect-ratio: 4 / 3;
+      align-self: auto;
+      border-radius: 2.5rem;
+    }
+  }
+
+  // Small mobile screens
+  @media (max-width: 360px) {
+    gap: 2rem;
+    margin-bottom: 4rem;
+
+    &__image {
+      aspect-ratio: 1 / 1;
+      border-radius: 2rem;
+    }
+
+    &__info .copy {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
   }
 }
