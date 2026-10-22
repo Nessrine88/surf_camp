@@ -1,9 +1,12 @@
+
 @use "../../base/variables" as *;
 @use "../../base/mixins" as *;
 
 .signup-form {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 4rem;
   margin-bottom: 6rem;
 
   &__headline {
@@ -12,6 +15,7 @@
 
   &__info {
     width: 49%;
+    min-width: 0;
 
     & .copy:not(:last-of-type) {
       margin-bottom: 1.6rem;
@@ -20,26 +24,32 @@
 
   &__form {
     width: 45%;
+    min-width: 0;
 
     & .input {
       width: 100%;
+      box-sizing: border-box;
     }
 
     & .input__container {
+      width: 100%;
       margin-bottom: 4rem;
     }
 
     & .btn {
       margin-top: 2rem;
+      max-width: 100%;
     }
   }
 
   &__name-container {
     display: flex;
     justify-content: space-between;
+    gap: 1.5rem;
 
     & .input__container {
       width: 48%;
+      min-width: 0;
     }
   }
 
@@ -53,8 +63,104 @@
       margin-top: 6rem;
       margin-bottom: 2.4rem;
     }
+
     & p:first-of-type {
       margin-bottom: 8px;
+    }
+  }
+
+  // Tablets
+  @include respond(tab-port) {
+    gap: 3rem;
+    margin-bottom: 5rem;
+
+    &__info {
+      width: 48%;
+    }
+
+    &__form {
+      width: 48%;
+    }
+
+    &__headline {
+      margin-bottom: 2.5rem;
+    }
+
+    &__form .input__container {
+      margin-bottom: 3rem;
+    }
+
+    &__name-container {
+      gap: 1rem;
+
+      & .input__container {
+        width: 50%;
+      }
+    }
+
+    &__pricing h3 {
+      margin-top: 4rem;
+    }
+  }
+
+  // Mobile
+  @include respond(phone) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4rem;
+    margin-bottom: 4rem;
+
+    &__info,
+    &__form {
+      width: 100%;
+    }
+
+    &__headline {
+      margin-bottom: 2rem;
+    }
+
+    &__form .input__container {
+      margin-bottom: 2.5rem;
+    }
+
+    &__form .btn {
+      margin-top: 1rem;
+    }
+
+    &__name-container {
+      gap: 1.5rem;
+
+      & .input__container {
+        width: 50%;
+      }
+    }
+
+    &__pricing h3 {
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  // Small mobile screens
+  @media (max-width: 360px) {
+    gap: 3rem;
+    margin-bottom: 3rem;
+
+    &__name-container {
+      flex-direction: column;
+      gap: 0;
+
+      & .input__container {
+        width: 100%;
+      }
+    }
+
+    &__form .input__container {
+      margin-bottom: 2rem;
+    }
+
+    &__pricing h3 {
+      margin-top: 2.5rem;
     }
   }
 }

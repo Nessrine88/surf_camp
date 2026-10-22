@@ -1,12 +1,52 @@
+
 @use "../base/variables" as *;
 @use "../base/mixins" as *;
+
 .blog-page,
 .events-page {
-  padding: 5rem 2rem ;
-  padding-top: 15rem;
+  padding: 20rem 4.8rem 12rem;
 }
 
 .article-section {
   padding: 0 4.8rem;
   margin-bottom: 12rem;
+}
+
+// Tablets
+@include respond(tab-port) {
+  .blog-page,
+  .events-page {
+    padding: 15rem 3rem 8rem;
+  }
+
+  .article-section {
+    padding: 0 3rem;
+    margin-bottom: 8rem;
+  }
+}
+
+// Mobile
+@include respond(phone) {
+  .blog-page,
+  .events-page {
+    padding: 12rem 2rem 6rem;
+  }
+
+  .article-section {
+    padding: 0 2rem;
+    margin-bottom: 6rem;
+  }
+}
+
+// Small mobile screens
+@media (max-width: 360px) {
+  .blog-page,
+  .events-page {
+    padding: 10rem 1.5rem 4rem;
+  }
+
+  .article-section {
+    padding: 0 1.5rem;
+    margin-bottom: 4rem;
+  }
 }
